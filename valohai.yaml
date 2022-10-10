@@ -75,7 +75,7 @@
         type: flag
         pass-as: --unsupervised={v}
         description: train only with everything as object class
-        default: True
+        default: False
       - name: moco_t
         type: float
         pass-as: --moco-t={v}
