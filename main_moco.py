@@ -151,7 +151,8 @@ parser.add_argument(
     type=float,
     help='moco momentum of updating momentum encoder (default: 0.99)')
 parser.add_argument('--moco-m-cos',
-                    action='store_true',
+                    default = False,
+                    type=bool,
                     help='gradually increase moco momentum to 1 with a '
                     'half-cycle cosine schedule')
 parser.add_argument('--moco-t',
@@ -161,12 +162,14 @@ parser.add_argument('--moco-t',
 
 # vit specific configs:
 parser.add_argument('--stop-grad-conv1',
-                    action='store_true',
+                    default = False,
+                    type=bool,
                     help='stop-grad after first conv, or patch embedding')
 
 parser.add_argument('--unsupervised',
-                    action='store_true',
-                    help='train only on object class')
+                    default = False,
+                    type=bool,
+                    help='train on object class')
 
 # other upgrades
 parser.add_argument('--optimizer',
