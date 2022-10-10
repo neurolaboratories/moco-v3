@@ -120,6 +120,8 @@ parser.add_argument('--crop-min', default=0.08, type=float,
 
 def main():
     args = parser.parse_args()
+    
+    print(args)
 
     if args.seed is not None:
         random.seed(args.seed)

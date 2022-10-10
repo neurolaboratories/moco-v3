@@ -1,0 +1,87 @@
+- step:
+    name: moco-train
+    image: neurolabszia.azurecr.io/valohai-zia-vision:phase3-multi-gpu-training-gpu
+    command:
+      - mkdir /valohai/inputs/data/
+      - mkdir /valohai/inputs/model/
+      - mkdir /valohai/outputs/models/
+      - export PL_TORCH_DISTRIBUTED_BACKEND=gloo
+      - python main_moco.py {parameters}
+
+    parameters:
+      - name: arch
+        type: string
+        pass-as: --arch={v}
+        description: Model architecture
+        default: "resnet50"
+      - name: workers
+        type: integer
+        pass-as: --workers={v}
+        description: Number of workers
+        default: 32
+      - name: epochs
+        type: integer
+        pass-as: --epochs={v}
+        description: Number of epochs
+        default: 100
+      - name: warmup-epochs
+        type: integer
+        pass-as: --warmup-epochs={v}
+        description: Number of Warmup epochs
+        default: 10
+      - name: batch-size
+        type: integer
+        pass-as: --batch-size={v}
+        description: Batch Size
+        default: 4096
+      - name: optimizer
+        type: string
+        pass-as: --optimizer={v}
+        description: Optimizer
+        default: "adamw"
+      - name: learning-rate
+        type: float
+        pass-as: --lr={v}
+        description: Learning Rate
+        default: 0.6
+      - name: weight-decay
+        type: float
+        pass-as: --weight-decay={v}
+        description: Weight Decay
+        default: 0.000001
+      - name: stop_grad_conv1
+        type: flag
+        pass-as: --stop-grad-conv1={v}
+        description: stop-grad after first conv, or patch embedding
+        default: False
+      - name: moco_m_cos
+        type: flag
+        pass-as: --moco-m-cos={v}
+        description: gradually increase moco momentum to 1 with a half-cycle cosine schedule
+        default: False
+      - name: moco_t
+        type: float
+        pass-as: --moco-t={v}
+        description: softmax temperature
+        default: 1.0
+      - name: dist-url
+        type: string
+        pass-as: --dist-url={v}
+        description: url used to set up distributed training
+        default: "tcp://224.66.41.62:23456"
+      - name: multiprocessing-distributed
+        type: flag
+        pass-as: --multiprocessing-distributed={v}
+        description: Use multi-processing distributed training to launch N processes per node, which has N GPUs.
+        default: True
+      - name: world-size
+        type: integer
+        pass-as: --world-size={v}
+        description: Number of nodes for distributed training
+        default: -1
+      - name: rank
+        type: integer
+        pass-as: --rank={v}
+        description: Node rank for distributed training
+        default: -1
+      
