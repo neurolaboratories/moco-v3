@@ -8,7 +8,7 @@
       - python untar_train.py {parameter-value:dataset}
       - export PL_TORCH_DISTRIBUTED_BACKEND=gloo
       - python main_moco.py {parameters}
-      
+
     inputs:
       - name: data
         default: https://valohaidatasets.blob.core.windows.net/valohai-datasets/auchan/auchan_november_train/auchan_november_train_dataset.tar.gz
@@ -71,6 +71,11 @@
         pass-as: --moco-m-cos={v}
         description: gradually increase moco momentum to 1 with a half-cycle cosine schedule
         default: False
+      - name: unsupervised
+        type: flag
+        pass-as: --unsupervised={v}
+        description: train only with everything as object class
+        default: True
       - name: moco_t
         type: float
         pass-as: --moco-t={v}

@@ -164,6 +164,10 @@ parser.add_argument('--stop-grad-conv1',
                     action='store_true',
                     help='stop-grad after first conv, or patch embedding')
 
+parser.add_argument('--unsupervised',
+                    action='store_true',
+                    help='train only on object class')
+
 # other upgrades
 parser.add_argument('--optimizer',
                     default='lars',
@@ -344,8 +348,11 @@ def main_worker(gpu, ngpus_per_node, args):
     #     dataset_type='val',
     #     max_crops_per_class=10000,
     #     remove_unknown=True)
-
-    traindir = os.path.join(args.data, 'train')
+    
+    if args.unsupervised:
+        traindir = os.path.join(args.data, 'train_object')
+    else:
+        traindir = os.path.join(args.data, 'train')
 
     normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                      std=[0.229, 0.224, 0.225])
