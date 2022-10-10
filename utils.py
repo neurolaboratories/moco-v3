@@ -419,8 +419,12 @@ def convert_obj_det_dataset_to_classif_dataset(
             cropped_img = crop_image(copied_img, bbox)
             new_img_path = new_dataset_path / Path(
                 "./" + dataset_type) / category_name.lower().replace(' ', '_')
+            object_img_path = new_dataset_path / Path(
+                "./" + dataset_type + '_object') / 'object'
             new_img_path.mkdir(exist_ok=True, parents=True)
-            cropped_img.save(new_img_path / Path(str(ann['id']) + ".jpg"))
+            object_img_path.mkdir(exist_ok=True, parents=True)
+            cropped_img.save(new_img_path / Path(str(ann['id']) + ".png"))
+            cropped_img.save(object_img_path / Path(str(ann['id']) + ".png"))
             per_class_n[category_name] += 1
 
 

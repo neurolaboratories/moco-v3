@@ -44,6 +44,7 @@ torchvision_model_names = sorted(
 model_names = ['vit_small', 'vit_base', 'vit_conv_small', 'vit_conv_base'
                ] + torchvision_model_names
 
+
 parser = argparse.ArgumentParser(description='MoCo ImageNet Pre-Training')
 parser.add_argument('--data', metavar='DIR', help='path to dataset')
 parser.add_argument('-a',
@@ -332,13 +333,17 @@ def main_worker(gpu, ngpus_per_node, args):
     # Data loading code
     convert_obj_det_dataset_to_classif_dataset(
         dataset_path=args.data,
-        new_dataset_path=f"{args.data}/train_crops",
-        dataset_type='train')
+        new_dataset_path=args.data,
+        dataset_type='train',
+        max_crops_per_class=10000, 
+        remove_unknown=True)
 
-    convert_obj_det_dataset_to_classif_dataset(
-        dataset_path=args.data,
-        new_dataset_path=f"{args.data}/train_crops",
-        dataset_type='val')
+    # convert_obj_det_dataset_to_classif_dataset(
+    #     dataset_path=args.data,
+    #     new_dataset_path=args.data,
+    #     dataset_type='val',
+    #     max_crops_per_class=10000,
+    #     remove_unknown=True)
 
     traindir = os.path.join(args.data, 'train')
 
