@@ -41,6 +41,9 @@ torchvision_model_names = sorted(
     if name.islower() and not name.startswith("__")
     and callable(torchvision_models.__dict__[name]))
 
+os.environ['MASTER_ADDR'] = 'localhost'
+os.environ['MASTER_PORT'] = '5678'
+
 model_names = ['vit_small', 'vit_base', 'vit_conv_small', 'vit_conv_base'
                ] + torchvision_model_names
 
