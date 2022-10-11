@@ -531,7 +531,7 @@ class ProgressMeter(object):
         print(
             json.dumps({
                 'iteration': self.iteration,
-                'train_loss': str(self.meters[3])
+                'train_loss': self.meters[3].val
             }))
         print('\t'.join(entries))
 
