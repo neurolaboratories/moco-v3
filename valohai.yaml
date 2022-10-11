@@ -5,14 +5,14 @@
       - mkdir /valohai/inputs/data/
       - mkdir /valohai/inputs/model/
       - mkdir /valohai/outputs/models/
-      - python untar_train.py {parameter-value:dataset}
+      - python untar_archives.py --input_path /valohai/inputs/data
       - export PL_TORCH_DISTRIBUTED_BACKEND=gloo
       - python main_moco.py {parameters}
 
     inputs:
       - name: data
-        default: https://valohaidatasets.blob.core.windows.net/valohai-datasets/auchan/auchan_november_train/auchan_november_train_dataset.tar.gz
-
+        default: gs://valohai-datasets/syn/3dmodels/fruits-and-friends-revised.tar.gz
+        
     parameters:
       - name: arch
         type: string
