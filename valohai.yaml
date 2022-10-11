@@ -34,6 +34,11 @@
         pass-as: --epochs={v}
         description: Number of epochs
         default: 100
+      - name: save-interval
+        type: integer
+        pass-as: --save-interval={v}
+        description: Epoch Save Interval
+        default: 20
       - name: warmup-epochs
         type: integer
         pass-as: --warmup-epochs={v}

@@ -102,6 +102,11 @@ parser.add_argument('--wd',
                     metavar='W',
                     help='weight decay (default: 1e-6)',
                     dest='weight_decay')
+parser.add_argument('--save-interval',
+                    default=20,
+                    type=int,
+                    metavar='N',
+                    help='epoch save interval (default: 20)')
 parser.add_argument('-p',
                     '--print-freq',
                     default=10,
@@ -411,16 +416,17 @@ def main_worker(gpu, ngpus_per_node, args):
         if not args.multiprocessing_distributed or (
                 args.multiprocessing_distributed
                 and args.rank == 0):  # only the first GPU saves checkpoint
-            save_checkpoint(
-                {
-                    'epoch': epoch + 1,
-                    'arch': args.arch,
-                    'state_dict': model.state_dict(),
-                    'optimizer': optimizer.state_dict(),
-                    'scaler': scaler.state_dict(),
-                },
-                is_best=False,
-                filename='checkpoint_%04d.pth.tar' % epoch)
+            if epoch % args.save_interval == 0:
+                save_checkpoint(
+                    {
+                        'epoch': epoch + 1,
+                        'arch': args.arch,
+                        'state_dict': model.state_dict(),
+                        'optimizer': optimizer.state_dict(),
+                        'scaler': scaler.state_dict(),
+                    },
+                    is_best=False,
+                    filename='checkpoint_%04d.pth.tar' % epoch)
 
     if args.rank == 0:
         summary_writer.close()
