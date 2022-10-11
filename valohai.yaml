@@ -10,7 +10,7 @@
       - python main_moco.py {parameters}
 
     inputs:
-      - name: dataset
+      - name: data
         default: https://valohaidatasets.blob.core.windows.net/valohai-datasets/auchan/auchan_november_train/auchan_november_train_dataset.tar.gz
 
     parameters:
@@ -21,9 +21,9 @@
         default: "resnet50"
       - name: dataset
         type: string
-        pass-as: --dataset={v}
+        pass-as: --data={v}
         description: Root folder of datasets
-        default: "/valohai/inputs/data/"
+        default: "/valohai/inputs/data/dataset/"
       - name: workers
         type: integer
         pass-as: --workers={v}

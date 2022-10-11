@@ -6,6 +6,7 @@ import tarfile
 from pathlib import Path
 
 valohai_input_path = Path(sys.argv[1]).parent
+print(valohai_input_path)
 archives = glob.glob(str(valohai_input_path / '*.tar.gz'))
 
 # untar archives
