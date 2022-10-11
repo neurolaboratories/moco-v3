@@ -404,7 +404,6 @@ def main_worker(gpu, ngpus_per_node, args):
     for epoch in range(args.start_epoch, args.epochs):
         if args.distributed:
             train_sampler.set_epoch(epoch)
-
         # train for one epoch
         train(train_loader, model, optimizer, scaler, summary_writer, epoch,
               args)
@@ -521,7 +520,7 @@ class ProgressMeter(object):
     def display(self, batch):
         entries = [self.prefix + self.batch_fmtstr.format(batch)]
         entries += [str(meter) for meter in self.meters]
-        self.iteration = batch * self.epoch
+        self.iteration = self.epoch * self.num_batches + batch
 
         print(
             json.dumps({
