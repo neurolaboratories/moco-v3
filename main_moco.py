@@ -429,7 +429,8 @@ def main_worker(gpu, ngpus_per_node, args):
                     },
                     is_best=False,
                     filename=str(
-                        Path(args.output_path) / 'checkpoint_%04d.pth.tar'.format(epoch)))
+                        Path(args.output_path) /
+                        'checkpoint_{0}.pth.tar'.format(epoch)))
     if args.rank == 0:
         summary_writer.close()
 
