@@ -188,6 +188,8 @@ parser.add_argument('--crop-min',
 
 def main():
     args = parser.parse_args()
+    
+    print(os.environ)
 
     if args.seed is not None:
         random.seed(args.seed)
