@@ -225,6 +225,9 @@ def main():
 
 
 def main_worker(gpu, ngpus_per_node, args):
+    
+    print(f'INIT worker: {gpu}, {ngpus_per_node}, {args.local_rank}')
+    
     args.gpu = gpu
 
     # suppress printing if not first GPU on each node
