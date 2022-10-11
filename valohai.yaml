@@ -91,6 +91,6 @@
         default: -1
       - name: rank
         type: integer
-        pass-as: rank={v}
+        pass-as: --rank={v}
         description: Node rank for distributed training
         default: -1
