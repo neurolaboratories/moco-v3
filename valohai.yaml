@@ -12,7 +12,7 @@
     inputs:
       - name: data
         default: gs://valohai-datasets/syn/3dmodels/fruits-and-friends-revised.tar.gz
-        
+
     parameters:
       - name: arch
         type: string
@@ -68,11 +68,6 @@
         type: flag
         pass-as: --moco-m-cos={v}
         description: gradually increase moco momentum to 1 with a half-cycle cosine schedule
-        default: False
-      - name: unsupervised
-        type: flag
-        pass-as: --unsupervised={v}
-        description: train only with everything as object class
         default: False
       - name: moco_t
         type: float
