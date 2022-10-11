@@ -336,12 +336,13 @@ def main_worker(gpu, ngpus_per_node, args):
     cudnn.benchmark = True
 
     # Data loading code
-    convert_obj_det_dataset_to_classif_dataset(
-        dataset_path=args.data,
-        new_dataset_path=args.data,
-        dataset_type='train',
-        max_crops_per_class=10000, 
-        remove_unknown=True)
+    if 'coco_train.json' in os.listdir(args.data):
+        convert_obj_det_dataset_to_classif_dataset(
+            dataset_path=args.data,
+            new_dataset_path=args.data,
+            dataset_type='train',
+            max_crops_per_class=10000, 
+            remove_unknown=True)
     
     traindir = os.path.join(args.data, 'train')
 
