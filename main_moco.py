@@ -34,6 +34,7 @@ from torch.utils.tensorboard import SummaryWriter
 import moco.builder
 import moco.loader
 import moco.optimizer
+from pathlib import Path
 
 import vits
 from utils import convert_obj_det_dataset_to_classif_dataset
@@ -52,6 +53,7 @@ model_names = ['vit_small', 'vit_base', 'vit_conv_small', 'vit_conv_base'
 
 parser = argparse.ArgumentParser(description='MoCo ImageNet Pre-Training')
 parser.add_argument('--data', metavar='DIR', help='path to dataset')
+parser.add_argument('--output-path', metavar='DIR', help='path to output')
 parser.add_argument('-a',
                     '--arch',
                     metavar='ARCH',
@@ -426,8 +428,9 @@ def main_worker(gpu, ngpus_per_node, args):
                         'scaler': scaler.state_dict(),
                     },
                     is_best=False,
-                    filename='checkpoint_%04d.pth.tar' % epoch)
-
+                    filename=str(
+                        Path(args.output_path) / 'checkpoint_%04d.pth.tar' %
+                        epoch))
     if args.rank == 0:
         summary_writer.close()
 

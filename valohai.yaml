@@ -5,6 +5,7 @@
       - mkdir /valohai/inputs/data/
       - mkdir /valohai/inputs/model/
       - mkdir /valohai/outputs/models/
+      - mkdir -p {parameter-value:output_location}
       - python untar_archives.py --input_path /valohai/inputs/data
       - export PL_TORCH_DISTRIBUTED_BACKEND=gloo
       - python main_moco.py {parameters}
@@ -24,6 +25,11 @@
         pass-as: --data={v}
         description: Root folder of datasets
         default: "/valohai/inputs/data/dataset/"
+      - name: output_location
+        type: string
+        pass-as: --output-path={v}
+        description: Root folder of output datasets
+        default: "/valohai/outputs/models/"
       - name: workers
         type: integer
         pass-as: --workers={v}
