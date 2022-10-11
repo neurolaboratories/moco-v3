@@ -207,8 +207,8 @@ def main():
         warnings.warn('You have chosen a specific GPU. This will completely '
                       'disable data parallelism.')
 
-    if args.dist_url == "env://" and args.world_size == -1:
-        args.world_size = int(os.environ["WORLD_SIZE"])
+    #if args.dist_url == "env://" and args.world_size == -1:
+    #    args.world_size = int(os.environ["WORLD_SIZE"])
 
     args.distributed = args.world_size > 1 or args.multiprocessing_distributed
     print("NCCL available: ", torch.distributed.is_nccl_available())
@@ -225,10 +225,10 @@ def main():
                  args=(ngpus_per_node, args))
     else:
         # Simply call main_worker function
-        main_worker(args.gpu, ngpus_per_node, args, rank=())
+        main_worker(args.gpu, ngpus_per_node, args)
 
 
-def main_worker(gpu, ngpus_per_node, args, rank):
+def main_worker(gpu, ngpus_per_node, args):
     args.gpu = gpu
 
     # suppress printing if not first GPU on each node
@@ -248,7 +248,7 @@ def main_worker(gpu, ngpus_per_node, args, rank):
         if args.multiprocessing_distributed:
             # For multiprocessing distributed training, rank needs to be the
             # global rank among all the processes
-            rank = rank * ngpus_per_node + gpu
+            rank = 0 * ngpus_per_node + gpu
         dist.init_process_group(backend=args.dist_backend,
                                 init_method=args.dist_url,
                                 world_size=args.world_size,
