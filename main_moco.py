@@ -15,6 +15,7 @@ import shutil
 import time
 import warnings
 from functools import partial
+import json
 
 import torch
 import torch.nn as nn
@@ -433,7 +434,7 @@ def train(train_loader, model, optimizer, scaler, summary_writer, epoch, args):
     losses = AverageMeter('Loss', ':.4e')
     progress = ProgressMeter(len(train_loader),
                              [batch_time, data_time, learning_rates, losses],
-                             prefix="Epoch: [{}]".format(epoch))
+                             epoch=epoch)
 
     # switch to train mode
     model.train()
@@ -509,14 +510,24 @@ class AverageMeter(object):
 
 
 class ProgressMeter(object):
-    def __init__(self, num_batches, meters, prefix=""):
+    def __init__(self, num_batches, meters, epoch):
+        self.num_batches = num_batches
         self.batch_fmtstr = self._get_batch_fmtstr(num_batches)
         self.meters = meters
-        self.prefix = prefix
+        self.epoch = epoch
+        self.prefix = "Epoch: [{}]".format(epoch)
+        self.iteration = 0
 
     def display(self, batch):
         entries = [self.prefix + self.batch_fmtstr.format(batch)]
         entries += [str(meter) for meter in self.meters]
+        self.iteration = batch * self.epoch
+
+        print(
+            json.dumps({
+                'iteration': self.iteration,
+                'train_loss': self.meters[3]
+            }))
         print('\t'.join(entries))
 
     def _get_batch_fmtstr(self, num_batches):
