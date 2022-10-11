@@ -89,8 +89,8 @@
         pass-as: --world-size={v}
         description: Number of nodes for distributed training
         default: -1
-      - name: rank
+      - name: local_rank
         type: integer
-        pass-as: --rank={v}
+        pass-as: --local_rank={v}
         description: Node rank for distributed training
         default: -1

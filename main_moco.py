@@ -114,7 +114,7 @@ parser.add_argument('--world-size',
                     default=-1,
                     type=int,
                     help='number of nodes for distributed training')
-parser.add_argument('--rank',
+parser.add_argument('--local_rank',
                     default=-1,
                     type=int,
                     help='node rank for distributed training')
@@ -229,7 +229,7 @@ def main_worker(gpu, ngpus_per_node, args):
     args.gpu = gpu
 
     # suppress printing if not first GPU on each node
-    if args.multiprocessing_distributed and (args.gpu != 0 or args.rank != 0):
+    if args.multiprocessing_distributed and (args.gpu != 0 or args.local_rank != 0):
 
         def print_pass(*args):
             pass
@@ -240,16 +240,16 @@ def main_worker(gpu, ngpus_per_node, args):
         print("Use GPU: {} for training".format(args.gpu))
 
     if args.distributed:
-        if args.dist_url == "env://" and args.rank == -1:
-            args.rank = int(os.environ["RANK"])
+        if args.dist_url == "env://" and args.local_rank == -1:
+            args.local_rank = int(os.environ["RANK"])
         if args.multiprocessing_distributed:
             # For multiprocessing distributed training, rank needs to be the
             # global rank among all the processes
-            args.rank = args.rank * ngpus_per_node + gpu
+            args.local_rank = args.local_rank * ngpus_per_node + gpu
         dist.init_process_group(backend=args.dist_backend,
                                 init_method=args.dist_url,
                                 world_size=args.world_size,
-                                rank=args.rank)
+                                rank=args.local_rank)
         torch.distributed.barrier()
     # create model
     print("=> creating model '{}'".format(args.arch))
@@ -312,7 +312,7 @@ def main_worker(gpu, ngpus_per_node, args):
                                       weight_decay=args.weight_decay)
 
     scaler = torch.cuda.amp.GradScaler()
-    summary_writer = SummaryWriter() if args.rank == 0 else None
+    summary_writer = SummaryWriter() if args.local_rank == 0 else None
 
     # optionally resume from a checkpoint
     if args.resume:
@@ -408,7 +408,7 @@ def main_worker(gpu, ngpus_per_node, args):
 
         if not args.multiprocessing_distributed or (
                 args.multiprocessing_distributed
-                and args.rank == 0):  # only the first GPU saves checkpoint
+                and args.local_rank == 0):  # only the first GPU saves checkpoint
             save_checkpoint(
                 {
                     'epoch': epoch + 1,
@@ -420,7 +420,7 @@ def main_worker(gpu, ngpus_per_node, args):
                 is_best=False,
                 filename='checkpoint_%04d.pth.tar' % epoch)
 
-    if args.rank == 0:
+    if args.local_rank == 0:
         summary_writer.close()
 
 
@@ -458,7 +458,7 @@ def train(train_loader, model, optimizer, scaler, summary_writer, epoch, args):
             loss = model(images[0], images[1], moco_m)
 
         losses.update(loss.item(), images[0].size(0))
-        if args.rank == 0:
+        if args.local_rank == 0:
             summary_writer.add_scalar("loss", loss.item(),
                                       epoch * iters_per_epoch + i)
 
