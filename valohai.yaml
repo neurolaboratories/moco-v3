@@ -10,10 +10,8 @@
       - python main_moco.py {parameters}
 
     inputs:
-      - name: data
+      - name: dataset
         default: https://valohaidatasets.blob.core.windows.net/valohai-datasets/auchan/auchan_november_train/auchan_november_train_dataset.tar.gz
-      - name: model
-        default: https://valohainetworks.blob.core.windows.net/valohai-networks/networks/pretrained/test_weights.ckpt
 
     parameters:
       - name: arch
@@ -23,9 +21,9 @@
         default: "resnet50"
       - name: dataset
         type: string
-        pass-as: --data={v}
+        pass-as: --dataset={v}
         description: Root folder of datasets
-        default: "/valohai/inputs/data/dataset/"
+        default: "/valohai/inputs/data/"
       - name: workers
         type: integer
         pass-as: --workers={v}
