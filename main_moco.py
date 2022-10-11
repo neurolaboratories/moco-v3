@@ -44,7 +44,6 @@ torchvision_model_names = sorted(
 model_names = ['vit_small', 'vit_base', 'vit_conv_small', 'vit_conv_base'
                ] + torchvision_model_names
 
-
 parser = argparse.ArgumentParser(description='MoCo ImageNet Pre-Training')
 parser.add_argument('--data', metavar='DIR', help='path to dataset')
 parser.add_argument('-a',
@@ -130,7 +129,8 @@ parser.add_argument('--seed',
                     help='seed for initializing training. ')
 parser.add_argument('--gpu', default=None, type=int, help='GPU id to use.')
 parser.add_argument('--multiprocessing-distributed',
-                    action='store_true',
+                    default = False,
+                    type=bool,
                     help='Use multi-processing distributed training to launch '
                     'N processes per node, which has N GPUs. This is the '
                     'fastest way to use PyTorch for either single node or '
