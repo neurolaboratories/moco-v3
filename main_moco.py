@@ -43,6 +43,8 @@ torchvision_model_names = sorted(
 
 os.environ['MASTER_ADDR'] = 'localhost'
 os.environ['MASTER_PORT'] = '5678'
+os.environ["TORCH_CPP_LOG_LEVEL"] = "INFO"
+os.environ["TORCH_DISTRIBUTED_DEBUG"] = "DETAIL"
 
 model_names = ['vit_small', 'vit_base', 'vit_conv_small', 'vit_conv_base'
                ] + torchvision_model_names
@@ -132,7 +134,7 @@ parser.add_argument('--seed',
                     help='seed for initializing training. ')
 parser.add_argument('--gpu', default=None, type=int, help='GPU id to use.')
 parser.add_argument('--multiprocessing-distributed',
-                    default = False,
+                    default=False,
                     type=bool,
                     help='Use multi-processing distributed training to launch '
                     'N processes per node, which has N GPUs. This is the '
@@ -154,7 +156,7 @@ parser.add_argument(
     type=float,
     help='moco momentum of updating momentum encoder (default: 0.99)')
 parser.add_argument('--moco-m-cos',
-                    default = False,
+                    default=False,
                     type=bool,
                     help='gradually increase moco momentum to 1 with a '
                     'half-cycle cosine schedule')
@@ -165,7 +167,7 @@ parser.add_argument('--moco-t',
 
 # vit specific configs:
 parser.add_argument('--stop-grad-conv1',
-                    default = False,
+                    default=False,
                     type=bool,
                     help='stop-grad after first conv, or patch embedding')
 
@@ -188,7 +190,7 @@ parser.add_argument('--crop-min',
 
 def main():
     args = parser.parse_args()
-    
+
     print(os.environ)
 
     if args.seed is not None:
@@ -209,6 +211,7 @@ def main():
         args.world_size = int(os.environ["WORLD_SIZE"])
 
     args.distributed = args.world_size > 1 or args.multiprocessing_distributed
+    print("NCCL available: ", torch.distributed.is_nccl_available())
 
     ngpus_per_node = torch.cuda.device_count()
     if args.multiprocessing_distributed:
@@ -222,10 +225,10 @@ def main():
                  args=(ngpus_per_node, args))
     else:
         # Simply call main_worker function
-        main_worker(args.gpu, ngpus_per_node, args)
+        main_worker(args.gpu, ngpus_per_node, args, rank=())
 
 
-def main_worker(gpu, ngpus_per_node, args):
+def main_worker(gpu, ngpus_per_node, args, rank):
     args.gpu = gpu
 
     # suppress printing if not first GPU on each node
@@ -240,16 +243,16 @@ def main_worker(gpu, ngpus_per_node, args):
         print("Use GPU: {} for training".format(args.gpu))
 
     if args.distributed:
-        if args.dist_url == "env://" and args.rank == -1:
-            args.rank = int(os.environ["RANK"])
+        #if args.dist_url == "env://" and args.rank == -1:
+        #    args.rank = int(os.environ["RANK"])
         if args.multiprocessing_distributed:
             # For multiprocessing distributed training, rank needs to be the
             # global rank among all the processes
-            args.rank = args.rank * ngpus_per_node + gpu
+            rank = rank * ngpus_per_node + gpu
         dist.init_process_group(backend=args.dist_backend,
                                 init_method=args.dist_url,
                                 world_size=args.world_size,
-                                rank=args.rank)
+                                rank=rank)
         torch.distributed.barrier()
     # create model
     print("=> creating model '{}'".format(args.arch))
@@ -337,13 +340,12 @@ def main_worker(gpu, ngpus_per_node, args):
 
     # Data loading code
     if 'coco_train.json' in os.listdir(args.data):
-        convert_obj_det_dataset_to_classif_dataset(
-            dataset_path=args.data,
-            new_dataset_path=args.data,
-            dataset_type='train',
-            max_crops_per_class=10000, 
-            remove_unknown=True)
-    
+        convert_obj_det_dataset_to_classif_dataset(dataset_path=args.data,
+                                                   new_dataset_path=args.data,
+                                                   dataset_type='train',
+                                                   max_crops_per_class=10000,
+                                                   remove_unknown=True)
+
     traindir = os.path.join(args.data, 'train')
 
     normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
