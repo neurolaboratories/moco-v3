@@ -107,6 +107,19 @@ class MoCo_ResNet(MoCo):
 
         # predictor
         self.predictor = self._build_mlp(2, dim, mlp_dim, dim, False)
+        
+        
+class MoCo_Effnet(MoCo):
+    def _build_projector_and_predictor_mlps(self, dim, mlp_dim):
+        hidden_dim = self.base_encoder.classifier[1].weight.shape[1]
+        del self.base_encoder.classifier, self.momentum_encoder.classifier # remove original fc layer
+
+        # projectors
+        self.base_encoder.classifier = self._build_mlp(2, hidden_dim, mlp_dim, dim)
+        self.momentum_encoder.classifier = self._build_mlp(2, hidden_dim, mlp_dim, dim)
+
+        # predictor
+        self.predictor = self._build_mlp(2, dim, mlp_dim, dim, False)
 
 
 class MoCo_ViT(MoCo):

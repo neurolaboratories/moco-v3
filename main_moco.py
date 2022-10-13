@@ -269,6 +269,11 @@ def main_worker(gpu, ngpus_per_node, args):
             partial(vits.__dict__[args.arch],
                     stop_grad_conv1=args.stop_grad_conv1), args.moco_dim,
             args.moco_mlp_dim, args.moco_t)
+    elif args.arch.startswith('eff'):
+        model = moco.builder.MoCo_Effnet(
+            partial(torchvision_models.__dict__[args.arch],
+                    zero_init_residual=True), args.moco_dim, args.moco_mlp_dim,
+            args.moco_t)
     else:
         model = moco.builder.MoCo_ResNet(
             partial(torchvision_models.__dict__[args.arch],
