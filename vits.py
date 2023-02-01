@@ -145,9 +145,9 @@ class ConvStem(nn.Module):
         return x
 
 
-def vit_small(**kwargs):
+def vit_small(patch_size=8, **kwargs):
     model = VisionTransformerMoCo(
-        patch_size=16,
+        patch_size=patch_size,
         embed_dim=384,
         depth=12,
         num_heads=12,
@@ -160,39 +160,9 @@ def vit_small(**kwargs):
     return model
 
 
-def vit_small_8(**kwargs):
+def vit_base(patch_size=8, **kwargs):
     model = VisionTransformerMoCo(
-        patch_size=8,
-        embed_dim=384,
-        depth=12,
-        num_heads=12,
-        mlp_ratio=4,
-        qkv_bias=True,
-        norm_layer=partial(nn.LayerNorm, eps=1e-6),
-        **kwargs,
-    )
-    model.default_cfg = _cfg()
-    return model
-
-
-def vit_base(**kwargs):
-    model = VisionTransformerMoCo(
-        patch_size=16,
-        embed_dim=768,
-        depth=12,
-        num_heads=12,
-        mlp_ratio=4,
-        qkv_bias=True,
-        norm_layer=partial(nn.LayerNorm, eps=1e-6),
-        **kwargs,
-    )
-    model.default_cfg = _cfg()
-    return model
-
-
-def vit_base_8(**kwargs):
-    model = VisionTransformerMoCo(
-        patch_size=8,
+        patch_size=patch_size,
         embed_dim=768,
         depth=12,
         num_heads=12,
